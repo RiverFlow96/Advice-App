@@ -1,16 +1,52 @@
-# React + Vite
+# Advice App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Pequeña aplicación en React + Vite que muestra un consejo aleatorio consumiendo la API pública de Advice Slip.
 
-Currently, two official plugins are available:
+## Tecnologías principales
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<p align="left">
+	<a href="https://skillicons.dev">
+		<img src="https://skillicons.dev/icons?i=react,vite,tailwind,js,eslint" />
+	</a>
+</p>
 
-## React Compiler
+- **React** — UI.
+- **Vite** — Dev server y build.
+- **@tanstack/react-query** — Fetching, caché y re-fetch del consejo.
+- **Zustand** — Estado local mínimo (contador).
+- **Tailwind CSS (v4)** — Estilos mediante utilidades.
+- **lucide-react** — Iconos (dependencia instalada; úsala si añades iconos).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Estructura principal
 
-## Expanding the ESLint configuration
+- `index.html` — Monta `#root` y define estilos base del `<body>`.
+- `src/main.jsx` — Crea `QueryClient` y envuelve la app con `QueryClientProvider`.
+- `src/App.jsx` — UI principal; llama a la API y hace `refetch()` al pulsar el botón.
+- `src/Store/store.jsx` — Store de Zustand con `advice` e `incrementAdvice()`.
+- `src/App.css` — Import global de Tailwind: `@import 'tailwindcss';`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Qué incluye
+
+- Petición a la API pública: `https://api.adviceslip.com/advice`.
+- Muestra un consejo aleatorio al cargar la página.
+- Botón para pedir un nuevo consejo (re-fetch con React Query).
+- Prevención de caché de la API añadiendo `?t=${Date.now()}` en la URL.
+
+## Cómo ejecutar
+
+Instala dependencias y arranca el servidor de desarrollo:
+
+```bash
+npm install
+npm run dev
+
+# o con bun (hay `bun.lock` en el repo)
+bun install
+bun run dev
+```
+
+## Notas importantes
+
+- La UI usa `isLoading`, `isFetching` y `error` de React Query para estados de carga y error.
+- El botón se deshabilita mientras se está pidiendo un nuevo consejo.
+- El contador `advice` del store (Zustand) se incrementa al pedir un nuevo consejo y se muestra en pantalla.
