@@ -15,6 +15,7 @@
 
 import './App.css'
 import { useQuery } from '@tanstack/react-query'
+import useStore from './Store/store'
 
 const fetchAdvice = async () => {
   const res = await fetch(`https://api.adviceslip.com/advice?t=${Date.now()}`)
@@ -27,11 +28,19 @@ function App() {
   const { data, isLoading, isFetching, error, refetch } = useQuery({
     queryKey: ['advices'],
     queryFn: fetchAdvice,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   })
 
-  if (isLoading) return <span>Cargando...</span>
-  if (error) return <span>Error: {error.message}</span>
+  const increment = useStore((state) => state.incrementAdvice)
+  const advice = useStore((state) => state.advice)
+
+  if (isLoading) return <span className='text-white text-center font-bold'>Cargando...</span>
+  if (error) return <span className='text-white text-center font-bold'>Error: {error.message}</span>
+
+  const onClickButton = () => {
+    increment()
+    refetch()
+  }
 
   return (
     <>
@@ -50,13 +59,13 @@ function App() {
         justify-center
         '
       >
-        <p className='text-green-700 text-center font-bold text-[0.8rem]'>Text ???</p>
+        <p className='text-green-700 text-center font-bold text-[0.8rem]'>{advice}</p>
         <span className='h-7'></span>
         <div className='w-full h-7'>
           <p className='text-white text-center font-bold'>{data.slip.advice}</p>
         </div>
         <span className='h-7'></span>
-        <button className='text-white font-bold bg-green-700 w-40 rounded-2xl hover:bg-green-800' onClick={() => refetch()} disabled={isFetching}>New Advice</button>
+        <button className='text-white font-bold bg-green-700 w-40 rounded-2xl hover:bg-green-800' onClick={() => onClickButton()} disabled={isFetching || isLoading}>New Advice</button>
       </div>
     </>
   )
