@@ -13,29 +13,50 @@
 
 // Backgroun 2: #1B222B
 
-
 import './App.css'
+import { useQuery } from '@tanstack/react-query'
+
+const fetchAdvice = async () => {
+  const res = await fetch(`https://api.adviceslip.com/advice?t=${Date.now()}`)
+  if (!res.ok) throw new Error("No se pudo llamar a la API")
+  return res.json()
+}
 
 function App() {
+
+  const { data, isLoading, isFetching, error, refetch } = useQuery({
+    queryKey: ['advices'],
+    queryFn: fetchAdvice,
+    refetchOnWindowFocus: false
+  })
+
+  if (isLoading) return <span>Cargando...</span>
+  if (error) return <span>Error: {error.message}</span>
 
   return (
     <>
       <div className='
         flex
         flex-col
-        bg-[#1B222B]
+        bg-[#313949]
         w-[40dvw]
         h-[40dvh]
         rounded-2xl
         p-10
         font-sans
-        shadow-cyan-900
+        shadow-[#283142]
         shadow-2xl
+        items-center
+        justify-center
         '
       >
-        <p className='text-green-500 text-center font-bold'>Text ???</p>
+        <p className='text-green-700 text-center font-bold text-[0.8rem]'>Text ???</p>
         <span className='h-7'></span>
-        <p className='text-white text-center font-bold'>Example Text</p>
+        <div className='w-full h-7'>
+          <p className='text-white text-center font-bold'>{data.slip.advice}</p>
+        </div>
+        <span className='h-7'></span>
+        <button className='text-white font-bold bg-green-700 w-40 rounded-2xl hover:bg-green-800' onClick={() => refetch()} disabled={isFetching}>New Advice</button>
       </div>
     </>
   )
